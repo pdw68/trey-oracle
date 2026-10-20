@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TREY Solo Dashboard</title>
+<meta name="description" content="Solo roleplaying dashboard for the TREY GM emulator">
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TREY">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('treyTheme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--bd:#334155;--tx:#f1f5f9;--mu:#a3b1c6;--pri:#6366f1;--gold:#eab308;--goldtx:#1e293b;--blu:#38bdf8;--btn:#475569;--dng:#9f1239;--hi:#1e1b4b;--sel:#e2e8f0;--seltx:#0f172a;--selmu:#475569;--toast:#0b1220;--toasttx:#f1f5f9;--code:#020617;color-scheme:dark}
+:root[data-theme=sepia]{--bg:#efe5cf;--card:#f8f1e0;--bd:#d3c19a;--tx:#3a2c1a;--mu:#76623f;--pri:#8a5a2b;--gold:#94690c;--goldtx:#fff;--blu:#8f4a14;--btn:#8b7856;--dng:#9b2c2c;--hi:#ecdcb6;--sel:#5b4426;--seltx:#f8f1e0;--selmu:#e3d3b0;--toast:#3a2c1a;--toasttx:#f8f1e0;--code:#e9dcbd;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;padding:.75rem;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.top{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;max-width:1400px;margin:0 auto .75rem}
+.dash{display:grid;grid-template-columns:360px 1fr;gap:.75rem;max-width:1400px;margin:0 auto}
+.side{position:sticky;top:.75rem;align-self:start;max-height:calc(100vh - 1.5rem);overflow:auto}
+.p{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:.9rem;margin-bottom:.75rem}
+h2{margin:0 0 .4rem;font-size:1rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+h3{color:var(--blu);margin:.8rem 0 .2rem;font-size:.9rem}
+label{display:block;font-size:.78rem;font-weight:600;color:var(--mu);margin:.5rem 0 .2rem}
+input,select,textarea{width:100%;padding:.45rem;background:var(--bg);border:1px solid var(--bd);color:var(--tx);border-radius:4px;font:inherit}
+input[type=checkbox]{width:auto}
+:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
+.b{background:var(--btn);color:#fff;border:0;border-radius:4px;padding:.5rem .8rem;font:inherit;font-weight:700;cursor:pointer}
+.b:hover{filter:brightness(1.15)}.b:disabled{opacity:.4;cursor:not-allowed}
+.pri{background:var(--pri)}.dng{background:var(--dng)}.gold{background:var(--gold);color:var(--goldtx)}
+.sm{padding:.25rem .55rem;font-size:.78rem}.w{width:100%;margin-top:.6rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.row{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}.ck{display:flex;align-items:center;gap:.35rem;margin:.35rem 0;font-weight:400}
+.mu{color:var(--mu)}.s2{font-size:.72rem}.warn{color:var(--gold)}
+.res{margin-top:.6rem;padding:.6rem;background:var(--bg);border-left:3px solid var(--pri);border-radius:4px}.res:empty{display:none}
+.ans{font-size:1.15rem;font-weight:700}.det{color:var(--blu);font-size:.85rem}
+.chip{display:inline-block;padding:.1rem .45rem;margin:0 .25rem .25rem 0;border:1px solid var(--bd);border-radius:4px;font:.8rem monospace}.chip.hit{border-color:var(--gold);color:var(--gold)}
+.ev{margin-top:.5rem;padding:.6rem;background:var(--hi);border:1px solid var(--pri);border-radius:6px;font-size:.84rem}
+.hl{font-size:.78rem;padding:.3rem 0;border-bottom:1px dotted var(--bd)}
+.k{color:var(--mu);font-weight:700;display:inline-block;min-width:6rem}
+.tabs{display:flex;gap:.25rem;border-bottom:2px solid var(--bd);margin-bottom:.75rem}
+.tab{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--mu);padding:.5rem 1rem;font:inherit;font-weight:700;cursor:pointer}.tab.on{color:var(--blu);border-color:var(--blu)}
+.ban{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.7rem}
+.stv{font:700 1.6rem monospace;color:var(--gold)}
+.strip{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;font-size:.85rem;padding:.35rem .6rem;background:var(--bg);border:1px solid var(--bd);border-radius:6px}
+.strip .stv{font-size:1rem}.strip .fx{flex:1;min-width:8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpb{color:var(--gold);font-weight:700;font-size:.78rem}
+.scn{display:grid;grid-template-columns:210px 1fr;gap:.75rem;margin-top:.75rem}
+.sl{background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem;overflow:auto;max-height:calc(100vh - 12rem)}
+.si{padding:.5rem;border-radius:4px;cursor:pointer;margin-bottom:.25rem;background:var(--card)}.si.on{background:var(--sel);color:var(--seltx)}.si.on .mu{color:var(--selmu)}
+.edw{display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--bd);border-radius:6px}
+.eh{display:grid;grid-template-columns:2fr 1.3fr 1fr auto;gap:.4rem;padding:.5rem;background:var(--card);border-radius:6px 6px 0 0;align-items:center}
+#ed{flex:1;min-height:max(48vh,calc(100vh - 15rem));border:0;font:14px/1.5 ui-monospace,Consolas,monospace;resize:vertical}#pv{min-height:max(48vh,calc(100vh - 15rem));padding:1rem;overflow:auto}
+#pv pre{background:var(--code);border:1px solid var(--bd);border-radius:4px;padding:.6rem .8rem;overflow:auto;font:13px/1.45 ui-monospace,Consolas,monospace;white-space:pre}
+#pv code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--code);padding:.05rem .3rem;border-radius:3px}#pv pre code{background:none;padding:0;font-size:inherit}
+#pv blockquote{border-left:3px solid var(--bd);margin:.6rem 0;padding-left:.8rem;color:var(--mu)}
+.seg .b.on{background:var(--pri)}
+.mod{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:9}
+.mc{background:var(--card);border:1px solid var(--bd);border-radius:8px;width:92%;max-width:640px;max-height:85vh;overflow:auto;padding:1.2rem}
+.br{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--bd);font-size:.85rem}
+.toast{position:fixed;bottom:1rem;left:50%;transform:translate(-50%,200%);background:var(--toast);color:var(--toasttx);border:1px solid var(--bd);padding:.6rem 1rem;border-radius:6px;transition:.25s;z-index:20}.toast.on{transform:translate(-50%,0)}
+.gen{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:.75rem}.gen .p{margin:0}
+.th{display:flex;align-items:center;gap:.4rem;padding:.3rem;border-bottom:1px dotted var(--bd)}.th .tx{flex:1}.th.f{background:var(--hi);border-radius:4px}.th.d .tx{text-decoration:line-through;color:var(--mu)}
+.fab{display:none}
+@media(max-width:900px){.dash{grid-template-columns:1fr}.side{position:static;max-height:none}.scn{grid-template-columns:1fr}.sl{max-height:30vh}.eh{grid-template-columns:1fr 1fr}.fab{display:block;position:fixed;right:1rem;bottom:1rem;z-index:8;border-radius:50%;width:3.2rem;height:3.2rem;font-size:1.3rem;padding:0}}
+</style></head><body>
+<div class="top"><b style="font-size:1.1rem">TREY Solo Dashboard</b>
+<select id="camp" style="width:auto" aria-label="Campaign"></select>
+<button class="b sm" id="cNew">New</button><button class="b sm" id="cRen">Rename</button><button class="b sm dng" id="cDel">Delete</button>
+<span style="flex:1"></span><span id="sv" class="mu s2"></span>
+<button class="b sm" id="thm" title="Switch colour theme"></button>
+<button class="b sm" id="exp">Export</button><button class="b sm" id="impB">Import</button><input type="file" id="imp" accept=".json" hidden></div>
+<div class="dash">
+<aside class="side" id="side">
+<div class="p"><h2>Oracle</h2>
+<label for="q">Question (saved with the roll)</label><input id="q" placeholder="Yes/no question" autocomplete="off">
+<div class="g2"><div><label for="prob">Probability</label><select id="prob"><option value="normal">Normal</option><option value="very_unlikely">Very Unlikely (−d6)</option><option value="unlikely">Unlikely (−½ d6)</option><option value="likely">Likely (+½ d6)</option><option value="very_likely">Very Likely (+d6)</option></select></div>
+<div><label for="det">Detail group</label><select id="det"><option value="none">None</option><option value="custom">Custom…</option><option value="accessibility">Accessibility</option><option value="amount">Amount</option><option value="availability">Availability</option><option value="clue">Clue</option><option value="complexity">Complexity</option><option value="danger">Danger</option><option value="difficulty">Difficulty</option><option value="information">Information</option><option value="quality">Quality</option><option value="security">Security</option><option value="size">Size</option><option value="strength">Strength</option></select></div></div>
+<div id="cust" hidden class="g3" style="margin-top:.4rem"><input id="c1" placeholder="d8 1–2"><input id="c2" placeholder="d8 3–6"><input id="c3" placeholder="d8 7–8"></div>
+<div class="row"><label class="ck"><input type="checkbox" id="keep">Keep modifiers</label><label class="ck"><input type="checkbox" id="auto">Auto-log to scene</label><label class="ck"><input type="checkbox" id="man">My own dice</label></div>
+<div id="manbox" hidden class="g3"><input id="m10" type="number" min="1" max="10" placeholder="d10"><input id="m8" type="number" min="1" max="8" placeholder="d8"><input id="m6" type="number" min="1" max="6" placeholder="d6"></div>
+<button class="b pri w" id="roll">Ask the Oracle (Enter or R)</button>
+<div class="res" id="res" aria-live="polite"></div>
+<details style="margin-top:.5rem"><summary class="mu s2" style="cursor:pointer">Roll history</summary><div id="hist"></div></details></div>
+<div class="p"><h2>Word Tables</h2><button class="b w" style="margin-top:0" id="wd">Generate verb &amp; noun</button><div class="res" id="r-w"></div></div>
+<div class="p"><h2>Allies <button class="b sm" id="pa">Pick random</button></h2><textarea id="allies" rows="3" placeholder="One ally per line"></textarea><div id="alliesp" class="s2 warn"></div></div>
+<div class="p"><h2>Enemies <button class="b sm" id="pe">Pick random</button></h2><textarea id="enemies" rows="3" placeholder="One enemy per line"></textarea><div id="enemiesp" class="s2 warn"></div></div>
+</aside>
+<main id="main"><div class="p">
+<div class="tabs"><button class="tab on" data-t="log">Campaign log</button><button class="tab" data-t="setup">Setup &amp; tracking</button><button class="tab" data-t="gen">Generators</button></div>
+<div id="t-log">
+<div class="strip"><span class="mu">ST</span><span class="stv"><span id="st2">0</span>/<span id="tg2">15</span></span><span id="tpb" class="tpb" hidden>Turning Point ✓</span><span class="fx"><span class="mu">Focus:</span> <span id="fx">—</span></span><button class="b sm" id="go">Setup ›</button></div>
+<div class="scn"><div><button class="b sm w" style="margin:0 0 .4rem" id="ns">+ New scene</button><div class="sl" id="sl"></div></div>
+<div class="edw"><div class="eh"><input id="stl" placeholder="Scene title" aria-label="Scene title"><input id="spl" placeholder="Place" aria-label="Place"><input id="stm" placeholder="In-world time" aria-label="In-world time">
+<div class="row seg"><button class="b sm on" id="bE">Edit</button><button class="b sm" id="bR">Read</button><button class="b sm dng" id="ds">Delete</button></div></div>
+<textarea id="ed" placeholder="Write the scene in Markdown…" aria-label="Scene text"></textarea><div id="pv" hidden></div></div></div></div>
+<div id="t-setup" hidden>
+<div class="ban"><div><div class="mu s2">Story Tokens</div><div class="stv"><span id="st">0</span> / <span id="tg">15</span></div></div>
+<div><label for="len" style="margin-top:0">Adventure length</label><select id="len" style="width:auto"><option value="15">Short (15)</option><option value="25">Medium (25)</option><option value="35">Long (35)</option><option value="custom">Custom…</option></select></div>
+<div><label style="margin-top:0">Add ST</label><div class="row"><button class="b gold sm" data-st="1">+1</button><button class="b gold sm" data-st="2">+2</button><button class="b gold sm" data-st="3">+3</button><button class="b sm" data-st="-1">−1</button></div></div>
+<div><label style="margin-top:0">Voluntary event, scene <span id="sn"></span> (once per scene)</label><div class="row"><button class="b sm" id="vN"></button><button class="b sm" id="vX"></button></div></div>
+<button class="b pri" id="store">Spend ST</button>
+<label class="ck" style="flex-basis:100%;margin:0"><input type="checkbox" id="tp"><span id="tpt"></span></label></div>
+<div><label for="goal">Final goal</label><input id="goal"></div>
+<div><div class="row" style="justify-content:space-between"><label style="margin:.6rem 0 .2rem">Plot threads <span class="mu s2">(★ = current focus)</span></label><button class="b sm" id="tr">Pick random</button></div>
+<div class="row"><input id="tn" placeholder="Add a plot thread" style="flex:1;width:auto" aria-label="New plot thread"><button class="b sm pri" id="ta">Add</button></div><div id="trr" class="s2 warn"></div><div id="tl"></div></div>
+</div>
+<div id="t-gen" hidden><div class="gen">
+<div class="p"><h2>NPC</h2><div class="g2"><div><label for="nt">Good treatment</label><select id="nt"><option value="normal">Normal</option><option value="very_unlikely">Very Unlikely</option><option value="unlikely">Unlikely</option><option value="likely">Likely</option><option value="very_likely">Very Likely</option></select></div><div><label for="gt">Gender table</label><select id="gt"><option value="s">Female / Male</option><option value="o">With Other</option></select></div></div><button class="b pri w" id="gn">Generate NPC</button><div class="res" id="r-n"></div>
+<div id="npcAdd" hidden class="row" style="margin-top:.5rem"><input id="nn" placeholder="Name" style="flex:1;width:auto"><button class="b sm" id="aA">+ Ally</button><button class="b sm" id="aE">+ Enemy</button></div></div>
+<div class="p"><h2>Mission</h2><button class="b pri w" style="margin-top:0" id="gm">Generate mission</button><div class="res" id="r-m"></div></div>
+<div class="p"><h2>Weather</h2><div class="g2"><select id="season" aria-label="Season"><option value="none">Spring / none</option><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option></select><button class="b pri" id="gw">Generate</button></div><div class="res" id="r-wx"></div></div>
+<div class="p"><h2>Landscape</h2><button class="b pri w" style="margin-top:0" id="gl">Generate landscape</button><div class="res" id="r-l"></div></div>
+<div class="p"><h2>Location</h2><button class="b pri w" style="margin-top:0" id="gb">Generate location</button><div class="res" id="r-b"></div></div>
+</div></div></div></main></div>
+<div class="mod" id="mod" hidden><div class="mc"><h2>Story Token store <span class="stv" style="font-size:1rem" id="mst"></span><button class="b sm" id="mcl">Close</button></h2><div id="bl"></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div><button class="b pri fab" id="fab" aria-label="Jump between Oracle and log">🎲</button>
+<script>
+const detailMaps = {
+        accessibility: { low: "Easy", med: "Normal", high: "Hard" },
+        amount: { low: "One", med: "A few", high: "Many" },
+        availability: { low: "Common", med: "Standard", high: "Rare" },
+        clue: { low: "Poor", med: "Average", high: "Good" },
+        complexity: { low: "Simple", med: "Medium", high: "Complex" },
+        danger: { low: "Low", med: "Medium", high: "High" },
+        difficulty: { low: "Easy", med: "Medium", high: "Difficult" },
+        information: { low: "Bad", med: "Average", high: "Good" },
+        quality: { low: "Poor", med: "Standard", high: "Good" },
+        security: { low: "Weak", med: "Average", high: "Strong" },
+        size: { low: "Small", med: "Average", high: "Large" },
+        strength: { low: "Weak", med: "Average", high: "Strong" }
+    };
+const npcBehaviorMap = { 1: "Violent", 2: "Aggressive", 3: "Irritated", 4: "Distanced", 5: "Indifferent", 6: "Indifferent", 7: "Polite", 8: "Nice", 9: "Kind-hearted", 10: "Loving" };
+const npcPersonalityMap = ["Shy, Withdrawn, Quiet, Careful", "Social, Outgoing, Happy, Enthusiastic", "Antisocial, Whiny, Dissatisfied, Depressed", "Bully, Manipulative, Dominant, Oppressive", "Angry, Passionate, Jealous, Competitive", "Paranoid, Suspicious, Scared, Emotional", "Safe, Calm, Supportive, Stable", "Apathetic, Lethargic, Uninterested, Emotionless"];
+const npcBodyMap = ["Skinny/Light", "Skinny/Dark", "Slim/Light", "Slim/Dark", "Athletic/Light", "Athletic/Dark", "Stout/Light", "Stout/Dark", "Corpulent/Light", "Corpulent/Dark"];
+const npcAgeMap = { 1: "Youth", 2: "Young adult", 3: "Young adult", 4: "Adult", 5: "Adult", 6: "Middle-aged", 7: "Middle-aged", 8: "Old" };
+const npcGenderMap = ["Female/Short", "Female/Average", "Female/Tall", "Male/Short", "Male/Average", "Male/Tall"];
+const missionAssignMap = ["Stop something or someone/Eliminate/Chase", "Secure an area/Prevent enemies", "Find object/Find treasure/Find person/Find something important", "Survive/Persevere/Get through", "Break out/Flee", "Solve crime/Solve mystery", "Escort/Guard/Rescue", "Spy/Explore/Find information", "Exposed to assault/Exposed to hijacking/Exposed to robbery", "Convince/Negotiate/Intimidate"];
+const missionClientMap = ["Your own initiative", "Your family", "A friend/An acquaintance", "Your superior", "An organization", "A society/A group of people", "A ruler/A president/A chieftain", "A private citizen/An unknown person"];
+const missionRewardMap = ["Currency", "Object", "Knowledge", "Rank/Status", "Gratitude", "Nothing"];
+const locLandscapeMap = ["Water (Lake, Seaside, River, Rapids, Reservoir, Canal, Islet, Waterfall, Snow and Ice)", "Wetland (Swamp, River Delta, Peatland, Flooded, Tidal Area)", "Open (Meadow, Tundra, Savannah, Desert, Deforested, Ice Sheet)", "Pasture: Any local livestock, friendly or not", "Wasteland (Dump, Mine and Mining Waste, Gravel, Industrial, Toxic, Quarry, Ashes)", "Crops: Any local grains or useful plants", "Shrubland (Dense, Sparse, Low, Tall)", "Forest (Deciduous, Coniferous, Dense, Overgrown, Dark, Old, Dead, Brooding)", "Rocky (Peak, Boulders, Rugged, Craggy, Highland, Canyon)", "Special (Hot Spring, Cave, Burned, Spiritual, Sinkhole, Hideaway, Dead Zone, Crater)"];
+const locBuildingMap = ["Residence (House, Apartment, Castle, Mansion, Tent, Hut, Trailer, Shack, Cabin)", "Entertainment (Bar, Restaurant, Museum, Theatre, Club, Zoo, Amusement Park, Arena)", "Business (Store, Warehouse, Office, Mall, Market Place, Laundromat, Trading Post, Bank)", "Manufacturing (Mill, Factory, Farm, Mine, Meat Processing Plant, Power Plant, Dump)", "Death (Cemetery, Crematorium, Crypt, Morgue, Tomb, Gallows Hill, Burial Mound)", "Devotion (Place of Worship, Temple, Standing Stones, Sacrificial Site, Ritual Chamber, Shrine)", "Institution (Hospital, School, Prison, Asylum, Orphanage, Nursing Home, Hospice)", "Lodging (Hotel, Hostel, Inn, Rented Room, Rented Cabin, Boarding House, Lodge)", "Public Space (Park, Plaza, University Campus, Library, Marina, Parking Lot, Beach)", "Transportation (Subway, Train Station, Ferry, Stable, Cruise Ship, Airport, Gas Station)"];
+
+const VERBS="Abuse Accuse Address Admire Aggravate Aid Alter Analyze Arrange Arrest Arrive Ask Assemble Bait Bargain Beat Become Befriend Believe Bind Borrow Brake Bribe Build Burn Bury Buy Catch Celebrate Change Charm Chase Cheat Claim Close Collect Command Continue Cooperate Corrupt Crawl Cry Cure Cut Damage Deceive Deduce Defeat Delay Depend Determine Disappear Disappoint Discover Discuss Distinguish Disturb Drag Dream Drink Drive Drop Eat Endure Examine Exceed Experience Explain Fake Feel Fight Fill Find Fire Fit Follow Force Forge Forget Free Gamble Gather Gaze Get Give Grant Grease Grow Guard Hand Hang Harass Harm Hate Hear Help Hide Hold Hunt Hurry Ignite Induce Inform Inherit Inspect Interfere Invite Jeopardize Keep Kick Kill Kiss Leave Lift Listen Live Lock Look Loot Lose Love Manufacture Market Meddle Meet Mesmerize Mix Monitor Move Murder Mutate Near Negotiate Observe Open Order Organize Overcome Own Persuade Pick Place Play Plead Plunder Practice Prepare Present Preserve Prosecute Prove Put Quarrel Read Recall Remind Repair Report Rescue Research Resist Restrain Retrieve Return Reverse Ride Riot Rise Rob Ruin Run Rush Save Scare Scavenge Search Secure Seduce Select Sell Send Serve Shape Share Shoot Shove Show Silence Sink Slacken Slaughter Sleep Smell Sneak Solve Sort Spread Stand Starve Steal Stop Study Succeed Suffer Summon Support Surprise Surround Suspect Swim Switch Take Teach Tear Tease Tell Tempt Terrorize Thank Throw Torment Trade Transform Translate Trap Travel Tread Trip Try Use Verify Wait Wake Wear Wield Win Worship Wreck Write Yield".split(" "),NOUNS="Access Action Agreement Air Answer Approval Argument Attack Attention Attraction Authority Award Balance Base Beginning Behavior Belief Benefit Birth Blood Body Bonus Breath Building Business Call Candidate Care Case Cause Challenge Chance Change Choice Communication Competition Control Country Crime Criticism Crush Damage Danger Death Debt Decision Degree Demand Depth Destruction Development Direction Discipline Discussion Disease Disgust Distance Distribution Drag Drive Dust Effect Event Exchange Existence Expansion Experience Expert Facts Failure Family Fear Feeling Fiction Fight Finding Fire Flight Focus Force Form Fortune Foundation Friend Front Funeral Government Grip Ground Group Growth Guide Harmony Hatred Health Heart Heat Help History Hope Idea Impact Invention Job Judgment Key Knowledge Language Law Learning Level Life Light Limit List Loss Love Machine Management Map Market Material Meaning Meeting Memory Message Method Middle Mind Mode Moment Money Mood Move Nation Negotiation News Night Number Observation Offer Opinion Order Organization Ornaments Owner Pain Part Payment Peace Penalty Perception Permission Person Perspective Philosophy Place Platform Play Pleasure Position Problem Profit Property Protest Purpose Quality Question Reaction Reality Reason Relationship Religion Representative Request Resource Respect Response Reward Rule Safety Satisfaction Scale Science Section Security Selection Servant Service Sex Shadow Shame Shock Sign Significance Situation Skill Smoke Society Space Species Stage Standard Story Strategy Substance Suggestions Support Surprise Task Tax Teaching Technology Tension Test Theory Thing Thought Time Trade Tradition Training Transport Trick Turn Understanding Value Variation War Warning Way Weakness Wealth Wish Words Work World Wound Wrong Youth".split(" ");
+const GA=['Female/Short','Female/Tall','Male/Short','Male/Tall','Other/Short','Other/Tall'];
+const BEN=[['Skill checks','Repeat a failed skill, attribute or talent check',2],['','Change a failed check to a success',4],['Combat','Get an extra action in the combat round',2],['','Change a miss to a hit',4],['','An enemy hit that would have killed you misses instead',6],['Oracle','Change a Yes to a No, or a No to a Yes',6],['','Exceptional Yes → Yes, or Exceptional No → No',4],['','Change one step on the Detail Die',4,1],['','Event outcome Negative → Positive',6],['','Event outcome Very Negative → Negative',4],['NPC behavior','Change an NPC’s behavior one step',2,1],['','Change an NPC’s capability one step',4,1],['Other','Find something useful for your situation',2],['','Someone who can help you suddenly appears',6]];
+const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),rd=n=>Math.floor(Math.random()*n)+1,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lines=t=>(t||'').split('\n').map(s=>s.trim()).filter(Boolean),pick=a=>a[rd(a.length)-1];
+const modOf=(p,c)=>({very_unlikely:-c,unlikely:-Math.ceil(c/2),likely:Math.ceil(c/2),very_likely:c}[p]||0);
+const KEY='treyV10';let S,C,tm,tt,lastLog='',NPCL='',uid=Date.now();const nid=()=>++uid;
+const blank=n=>({name:n,st:0,target:15,len:'15',tp:false,goal:'',threads:[],focus:null,allies:'',enemies:'',scenes:[],active:null,log:[]});
+const mkScene=o=>Object.assign({id:nid(),title:'',place:'',time:'',content:'',vol:0,mode:0},o);
+function norm(c){c=Object.assign(blank('Campaign'),c);c.threads=Array.isArray(c.threads)?c.threads:[];if(c.obj){if(!c.threads.length){const t={id:nid(),text:c.obj,done:0};c.threads=[t];c.focus=t.id}delete c.obj}c.scenes=(Array.isArray(c.scenes)?c.scenes:[]).map(mkScene);if(!c.scenes.length)c.scenes.push(mkScene({}));if(!c.scenes.some(s=>s.id==c.active))c.active=c.scenes[c.scenes.length-1].id;if(!Array.isArray(c.log))c.log=[];return c}
+function fromLegacy(o){const c=blank('Imported');Object.assign(c,{st:o.currentST||0,target:o.targetST||15,len:o.adventureLength||'15',goal:o.goal||'',obj:o.objective||'',tp:!!o.turningPoint,allies:o.allies||'',enemies:o.enemies||''});c.scenes=(o.scenes||[]).slice().reverse();if(!c.scenes.length&&(o.journal||o.scene))c.scenes=[{title:o.scene||'',content:o.journal||''}];c.active=o.activeSceneId;return c}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.camps){S={cur:'c1',auto:true,camps:{c1:blank('Campaign 1')}};try{const o=JSON.parse(localStorage.getItem('treyDashboardSave'));if(o){S.camps.c1=fromLegacy(o);S.camps.c1.name='Campaign 1'}}catch(e){}}
+for(const k in S.camps)S.camps[k]=norm(S.camps[k]);if(!S.camps[S.cur])S.cur=Object.keys(S.camps)[0];C=S.camps[S.cur]}
+function save(){$('sv').textContent='Saving…';clearTimeout(tm);tm=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));$('sv').textContent='Saved locally ✓'}catch(e){$('sv').textContent='⚠ Could not save. Export a backup.'}},400)}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3500)}
+const sc=()=>C.scenes.find(s=>s.id==C.active),sn=()=>C.scenes.findIndex(s=>s.id==C.active)+1;
+// Inline markdown: `code` is protected from bold/italic processing
+const inl=s=>{const K=[];s=s.replace(/`([^`\n]+)`/g,(_,c)=>(K.push(c),'\u0002'+(K.length-1)+'\u0002'));return s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\u0002(\d+)\u0002/g,(_,i)=>'<code>'+K[+i]+'</code>')};
+// Block markdown: fenced ``` code blocks are pulled out first so blank lines inside them survive
+function md(t){const B=[],o=[];let cb=null;const flush=()=>{B.push(cb.join('\n'));o.push('\n\u0001'+(B.length-1)+'\u0001\n');cb=null};
+for(const l of String(t).split('\n')){if(/^\s*```/.test(l)){if(cb)flush();else cb=[]}else if(cb)cb.push(l);else o.push(l)}if(cb)flush();
+return esc(o.join('\n')).split(/\n{2,}/).filter(b=>b.trim()).map(b=>{const cm=b.trim().match(/^\u0001(\d+)\u0001$/);if(cm)return'<pre><code>'+esc(B[+cm[1]])+'</code></pre>';const h=b.match(/^(#{1,3}) (.*)/);if(h&&!b.includes('\n'))return`<h${h[1].length}>${inl(h[2])}</h${h[1].length}>`;if(/^([-*] .+\n?)+$/.test(b))return'<ul>'+b.trim().split('\n').map(l=>`<li>${inl(l.slice(2))}</li>`).join('')+'</ul>';if(b.startsWith('&gt; '))return'<blockquote>'+inl(b.replace(/^&gt; ?/gm,'')).replace(/\n/g,'<br>')+'</blockquote>';return'<p>'+inl(b).replace(/\n/g,'<br>')+'</p>'}).join('')}
+function stUI(){$('st').textContent=$('st2').textContent=C.st;$('tg').textContent=$('tg2').textContent=C.target;$('tpb').hidden=!C.tp;$('tp').checked=C.tp;$('tpt').textContent=C.tp?'Turning Point reached: second event table in use, no new ST. Spend ST in the store.':'Turning Point not reached yet';const n=sn(),s=sc();$('sn').textContent=n;$('vN').textContent='Normal (+'+n+' ST)';$('vX').textContent='Exceptional (+'+2*n+' ST)';$('vN').disabled=$('vX').disabled=!!s.vol;$('mst').textContent=C.st+' ST';if(!$('mod').hidden)store()}
+function list(){$('sl').innerHTML=C.scenes.map((s,i)=>[s,i+1]).reverse().map(([s,n])=>`<div class="si${s.id==C.active?' on':''}" data-id="${s.id}"><b>${n}.</b> ${esc(s.title||'Untitled')}<div class="mu s2">${esc(s.place||'')}${s.place&&s.time?' · ':''}${esc(s.time||'')}</div></div>`).join('')}
+function setMode(r){$('ed').hidden=!!r;$('pv').hidden=!r;$('bE').classList.toggle('on',!r);$('bR').classList.toggle('on',!!r);if(r)$('pv').innerHTML=md(sc().content)}
+function ed(){const s=sc();$('stl').value=s.title;$('spl').value=s.place;$('stm').value=s.time;$('ed').value=s.content;setMode(s.mode)}
+function hist(){$('hist').innerHTML=C.log.slice(0,15).map(t=>`<div class="hl">${esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}</div>`).join('')}
+function ui(){$('camp').innerHTML=Object.entries(S.camps).map(([k,c])=>`<option value="${k}"${k==S.cur?' selected':''}>${esc(c.name)}</option>`).join('');['goal','allies','enemies'].forEach(k=>$(k).value=C[k]);$('len').value=C.len;$('auto').checked=S.auto!==false;$('alliesp').textContent=$('enemiesp').textContent='';stUI();list();thr();ed();hist()}
+function thr(){$('trr').textContent='';$('fx').textContent=(C.threads.find(t=>t.id==C.focus)||{}).text||'—';$('tl').innerHTML=C.threads.length?C.threads.map((t,i)=>`<div class="th${t.id==C.focus?' f':''}${t.done?' d':''}" data-id="${t.id}"><b class="mu">${i+1}.</b><button class="b sm" data-a="f" title="Make this the current focus" aria-label="Make this the current focus"${t.done?' disabled':''}>${t.id==C.focus?'★':'☆'}</button><span class="tx">${esc(t.text)}</span><button class="b sm" data-a="d" title="${t.done?'Reopen':'Resolve'}" aria-label="${t.done?'Reopen thread':'Resolve thread'}">${t.done?'↺':'✓'}</button><button class="b sm dng" data-a="x" title="Delete" aria-label="Delete thread">✕</button></div>`).join(''):'<div class="mu s2" style="margin-top:.3rem">No threads yet. Add the quests and tasks you choose to pursue.</div>'}
+const nextOpen=()=>{const n=C.threads.find(x=>!x.done);C.focus=n?n.id:null};
+function addThr(){const v=$('tn').value.trim();if(!v)return;const t={id:nid(),text:v,done:0};C.threads.push(t);if(!C.focus)C.focus=t.id;$('tn').value='';thr();logLine('🧵 New thread: **'+v+'**')}
+function appendScene(t){const s=sc();s.content+=(s.content&&!s.content.endsWith('\n')?'\n':'')+t+'\n';$('ed').value=s.content;if(!$('pv').hidden)$('pv').innerHTML=md(s.content);save()}
+function logLine(t){lastLog=t;C.log.unshift(t);C.log=C.log.slice(0,40);hist();if($('auto').checked)appendScene(t);else save()}
+function addST(n){if(C.tp&&n>0){toast('No new Story Tokens after the Turning Point.');return}C.st=Math.max(0,C.st+n);if(!C.tp&&C.st>=C.target&&C.target>0){C.tp=true;toast('Turning Point reached!')}stUI();save()}
+function evRoll(k){const a=rd(10),b=rd(8),c=rd(6),out=k=='x'?(a<=5?'Very Negative':'Very Positive'):(a==1?'Very Negative':a<=5?'Negative':a<=9?'Positive':'Very Positive');
+const pre=['Your character is affected','An NPC near you is affected','NPC near you does something unexpected','A new NPC enters the story','New item or new clue','Your ongoing objective is affected','Your final goal is affected','Something else unexpected happens'],post=['Your character is affected','An NPC near you is affected','NPC near you does something unexpected','An already introduced NPC makes a new appearance','New item','Your ongoing objective is affected or changed','The time aspect of your final goal changes','Plot Twist'];
+const when=c<=2?'Immediately (interrupts current action)':c<=4?'Soon (as soon as current action completes)':'Delayed (where it fits your objective)',neg=/Negative/.test(out);let npc='';
+if(b==2||b==3||(C.tp&&b==4)){const L=b==4?[...lines(C.allies),...lines(C.enemies)]:neg?lines(C.enemies):lines(C.allies);npc=L.length?(b==4?'':neg?'Enemy: ':'Ally: ')+pick(L):neg?'(no enemies listed)':'(no allies listed)'}
+return{kind:k,a,b,c,out,what:(C.tp?post:pre)[b-1],when,npc,thr:b==6?((C.threads.find(t=>t.id==C.focus)||{}).text||''):''}}
+const evCard=(e,t)=>`<div class="ev"><b>${e.kind=='x'?'⚡ Exceptional':'⚠️ Normal'} unexpected event</b> ${t}<br>Dice: d10 ${e.a} · d8 ${e.b} · d6 ${e.c}<br><b>Outcome:</b> ${e.out}<br><b>What/who:</b> ${e.what}${e.npc?'<br><b>Suggested NPC:</b> '+esc(e.npc):''}${e.thr?'<br><b>Current thread:</b> '+esc(e.thr):''}<br><b>Timing:</b> ${e.when}</div>`;
+const evLog=e=>`${e.kind=='x'?'Exceptional':'Normal'} event, **${e.out}**: ${e.what}${e.npc?' ('+e.npc+')':''}${e.thr?' (thread: '+e.thr+')':''}; ${e.when.split(' (')[0]}`;
+function showRes(h){$('res').innerHTML=h;$('side').scrollTop=0;const b=$('addl');if(b)b.onclick=()=>appendScene(lastLog)}
+function dice(){if($('man').checked){const v=['m10','m8','m6'].map(i=>+$(i).value);if(v[0]>=1&&v[0]<=10&&v[1]>=1&&v[1]<=8&&v[2]>=1&&v[2]<=6&&v.every(Number.isInteger))return v;toast('Enter d10 (1–10), d8 (1–8) and d6 (1–6), or turn off “My own dice”.');return null}return[rd(10),rd(8),rd(6)]}
+function roll(){const d=dice();if(!d)return;const[a,b,c]=d,p=$('prob').value,m=modOf(p,c),f=clamp(a+m,1,10),g=$('det').value,q=$('q').value.trim();
+const ans=f==1?'Exceptional No (No, and…)':f<=5?'No':f<=9?'Yes':'Exceptional Yes (Yes, and…)';let dt='';
+if(g!='none'&&f>=6){const M=g=='custom'?{low:$('c1').value||'Low',med:$('c2').value||'Medium',high:$('c3').value||'High'}:detailMaps[g];dt=(g=='custom'?'Custom':g[0].toUpperCase()+g.slice(1))+': '+M[['low','med','high'][b<=2?0:b<=6?1:2]]}
+const tri=a==b&&b==c,dbl=a==b||a==c||b==c;let ev=null,earn=0;const was=C.tp;if(dbl){ev=evRoll(tri?'x':'n');earn=tri?3:2;if(!was)addST(earn)}
+const hit=[a==b||a==c,a==b||b==c,a==c||b==c];
+showRes((q?`<div class="mu">Q: ${esc(q)}</div>`:'')+`<div>${[['d10',a],['d8',b],['d6',c]].map(([n,v],i)=>`<span class="chip${hit[i]?' hit':''}">${n} ${v}</span>`).join('')}${m?`<span class="mu s2">d10 ${a} ${m>0?'+':'−'} ${Math.abs(m)} = <b>${f}</b></span>`:''}</div><div class="ans">${ans}</div>${dt?`<div class="det">${esc(dt)}</div>`:''}${ev?evCard(ev,was?'(no ST after Turning Point)':'(+'+earn+' ST)'):''}<button class="b sm" id="addl" style="margin-top:.5rem"${$('auto').checked?' hidden':''}>Add to scene</button>`);
+logLine(`🎲 ${q?'**'+q+'** ':''}${p!='normal'?'['+$('prob').selectedOptions[0].text.split(' (')[0]+'] ':''}→ **${ans}**${dt?' · '+dt:''}${ev?' · '+evLog(ev):''}`);
+if(!$('keep').checked){$('prob').value='normal';$('det').value='none';$('cust').hidden=true}$('q').value='';if($('man').checked)['m10','m8','m6'].forEach(i=>$(i).value='')}
+function vol(k){const s=sc();if(s.vol)return toast('Voluntary event already used in this scene.');const n=sn()*(k=='x'?2:1),ev=evRoll(k),was=C.tp;s.vol=1;if(!was)addST(n);showRes(evCard(ev,was?'(voluntary, no ST after Turning Point)':`(voluntary, +${n} ST)`));logLine('🎲 Voluntary '+evLog(ev));stUI()}
+function store(){$('bl').innerHTML=(C.tp?'':'<p class="warn">Benefits unlock after the Turning Point.</p>')+BEN.map(([c,t,n,r],i)=>(c?`<h3>${c}</h3>`:'')+`<div class="br"><span>${t}${r?' <span class="mu s2">(repeatable)</span>':''}</span><button class="b gold sm" data-i="${i}"${!C.tp||C.st<n?' disabled':''}>${n} ST</button></div>`).join('')}
+const out=(id,t,rows)=>{$('r-'+id).innerHTML=rows.map(([k,v])=>`<div><span class="k">${k}</span>${esc(v)}</div>`).join('')+`<button class="b sm" style="margin-top:.4rem" data-log="${esc('🎲 **'+t+'**: '+rows.map(([k,v])=>k+' '+v).join(' · '))}">Add to scene</button>`};
+const W=L=>L[(Math.ceil(rd(10)/2)-1)*48+(rd(8)-1)*6+rd(6)-1];
+function npc(){const a=rd(10),c=rd(6),m=modOf($('nt').value,c),f=clamp(a+m,1,10),[bd,hr]=npcBodyMap[rd(10)-1].split('/'),g=($('gt').value=='o'?GA:npcGenderMap)[rd(6)-1].replace('/',' / '),cap=['Better/Stronger than you','Equal to you','Less skilled/Weaker than you'][rd(3)-1],vo=['High-pitched','Normal','Low-pitched'][rd(3)-1],pe=npcPersonalityMap[rd(8)-1],hair=pick(hr=='Light'?['White','Gray','Light blonde','Medium blonde','Light brown','Light red']:['Medium brown','Dark brown','Dark red','Black']);
+out('n','NPC',[['Behavior',npcBehaviorMap[f]+(m?` (${m>0?'+':'−'}${Math.abs(m)})`:'')],['Personality',pe],['Capability',cap],['Body / hair',bd+', '+hair+' hair'],['Age',npcAgeMap[rd(8)]],['Gender / height',g],['Voice',vo]]);NPCL=`${npcBehaviorMap[f]}, ${pe.split(',')[0].toLowerCase()}, ${cap.split('/')[0].toLowerCase()}`;$('npcAdd').hidden=false}
+function addNpc(l){const t=($('nn').value.trim()||'NPC')+' ('+NPCL+')';C[l]=(C[l]?C[l].replace(/\n*$/,'\n'):'')+t;$(l).value=C[l];$('nn').value='';save();toast('Added to '+l+'.')}
+function wx(){const a=rd(10),b=rd(8),c=rd(6),m={autumn:[1,1,0],winter:[0,0,1],summer:[0,-1,-1]}[$('season').value]||[0,0,0],w=clamp(a+m[0],1,10),r=clamp(b+m[1],1,8),t=clamp(c+m[2],1,6);
+out('wx','Weather',[['Weather',w<=3?'Nothing special':w<=5?'Light breeze':w<=7?'Windy':w==8?'Haze/Fog':w==9?'Storm':'Hurricane'],['Rain / clouds',r<=4?'No precipitation (clear skies/scattered clouds)':r==5?'Drizzle/occasional snowflakes (slightly cloudy/gray cloud cover)':r==6?'Light rain/light snowfall (light cloudiness/cloudy)':r==7?'Rain/snowfall (cloudy/thick gray cloud cover/thunder)':'Heavy rain/heavy snowfall/hail (thick dark cloud cover/thunder)'],['Temperature',t==1?'Very hot':t==2?'Hot':t<=4?'Average':t==5?'Cold':'Very cold']])}
+function land(){const a=rd(10),b=rd(8),c=rd(6),r=[['Location',locLandscapeMap[a-1]],['Inclination',b<=2?'Flatland':b<=4?'Hills & Dales':b<=6?'Mountains & Valleys':'Steep Terrain'],['Size',c<=2?'Small (50-250 m)':c<=4?'Medium (250-1000 m)':'Large (1-5 km)']];if(a==b&&b==c)r.push(['Special','Add a result from Special (10)']);else if(a==b||a==c||b==c)r.push(['Special','Add a result from the Location generator']);out('l','Landscape',r)}
+function bld(){const a=rd(10),b=rd(8),c=rd(6);let cd=b<=2?'Dilapidated':b<=4?'Decaying':b<=6?'Worn':'Well preserved';if(a==b&&b==c)cd+=' (a small cluster of buildings)';else if(a==b||a==c||b==c)cd+=' (two buildings)';out('b','Location',[['Location',locBuildingMap[a-1]],['Condition',cd],['Size',c<=2?'Small':c<=4?'Medium':'Large']])}
+const pk=t=>{const L=lines(C[t]),r=$(t+'p');if(!L.length){r.textContent='Add some names first.';return}const i=rd(L.length);r.textContent=`Rolled #${i}: ${L[i-1]}`};
+// Tabs (last-used tab is remembered)
+const TABS=['log','setup','gen'];function tab(t){if(!TABS.includes(t))t='log';S.tab=t;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t==t));TABS.forEach(k=>$('t-'+k).hidden=k!=t)}
+// Theme (stored separately from campaign data so exports aren't affected)
+function thm(){const t=document.documentElement.dataset.theme=='sepia'?'sepia':'dark';$('thm').textContent=t=='sepia'?'☾ Dark':'☀ Sepia';document.querySelector('meta[name=theme-color]').content=t=='sepia'?'#efe5cf':'#0f172a'}
+$('thm').onclick=()=>{const t=document.documentElement.dataset.theme=='sepia'?'dark':'sepia';document.documentElement.dataset.theme=t;try{localStorage.setItem('treyTheme',t)}catch(e){}thm()};
+$('roll').onclick=roll;$('ta').onclick=addThr;$('tn').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();addThr()}};
+$('tr').onclick=()=>{const o=C.threads.map((t,i)=>[t,i+1]).filter(x=>!x[0].done);$('trr').textContent=o.length?(x=>`Rolled #${x[1]}: ${x[0].text}`)(pick(o)):'No open threads.'};
+$('tl').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=+b.closest('.th').dataset.id,t=C.threads.find(x=>x.id==id),a=b.dataset.a;
+if(a=='f'){C.focus=id;thr();save()}
+else if(a=='d'){t.done=t.done?0:1;if(t.done){if(C.focus==id)nextOpen();thr();logLine('✅ Thread resolved: **'+t.text+'**')}else{if(!C.focus)C.focus=id;thr();save()}}
+else if(a=='x'){if(!confirm('Delete this thread?'))return;C.threads=C.threads.filter(x=>x.id!=id);if(C.focus==id)nextOpen();thr();save()}};
+$('vN').onclick=()=>vol('n');$('vX').onclick=()=>vol('x');$('store').onclick=()=>{store();$('mod').hidden=false};$('mcl').onclick=()=>$('mod').hidden=true;
+$('mod').onclick=e=>{if(e.target==$('mod'))$('mod').hidden=true};
+$('bl').onclick=e=>{const i=e.target.dataset.i;if(i==null)return;const[,t,n]=BEN[+i];if(!C.tp||C.st<n)return;C.st-=n;logLine(`💰 Spent ${n} ST: ${t}`);stUI();save();toast(`Spent ${n} ST.`)};
+$('wd').onclick=()=>out('w','Words',[['Verb',W(VERBS)],['Noun',W(NOUNS)]]);
+$('gn').onclick=npc;$('gm').onclick=()=>out('m','Mission',[['Assignment',missionAssignMap[rd(10)-1]],['Client',missionClientMap[rd(8)-1]],['Reward',missionRewardMap[rd(6)-1]]]);$('gw').onclick=wx;$('gl').onclick=land;$('gb').onclick=bld;
+$('aA').onclick=()=>addNpc('allies');$('aE').onclick=()=>addNpc('enemies');$('pa').onclick=()=>pk('allies');$('pe').onclick=()=>pk('enemies');
+$('det').onchange=()=>$('cust').hidden=$('det').value!='custom';$('man').onchange=()=>$('manbox').hidden=!$('man').checked;$('auto').onchange=()=>{S.auto=$('auto').checked;save()};
+document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>addST(+b.dataset.st));
+$('tp').onchange=()=>{C.tp=$('tp').checked;stUI();save()};
+$('len').onchange=()=>{const v=$('len').value;C.len=v;if(v=='custom'){const x=parseInt(prompt('Story Tokens needed for the Turning Point:',C.target));if(x>0)C.target=x}else C.target=+v;addST(0)};
+['goal','allies','enemies'].forEach(k=>$(k).oninput=()=>{C[k]=$(k).value;save()});
+[['stl','title'],['spl','place'],['stm','time'],['ed','content']].forEach(([i,k])=>$(i).oninput=()=>{sc()[k]=$(i).value;if(k!='content')list();save()});
+$('sl').onclick=e=>{const d=e.target.closest('.si');if(d){C.active=+d.dataset.id;save();list();ed();stUI()}};
+$('ns').onclick=()=>{const s=mkScene({});C.scenes.push(s);C.active=s.id;save();list();ed();stUI()};
+$('ds').onclick=()=>{if(!confirm('Delete this scene?'))return;C.scenes=C.scenes.filter(s=>s.id!=C.active);C=norm(C);S.camps[S.cur]=C;save();list();ed();stUI()};
+$('bE').onclick=()=>{sc().mode=0;setMode(0);save()};$('bR').onclick=()=>{sc().mode=1;setMode(1);save()};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{tab(b.dataset.t);save()});$('go').onclick=()=>{tab('setup');save()};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-log]');if(b)appendScene(b.dataset.log)});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')$('mod').hidden=true;const ty=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(e.key=='Enter'&&document.activeElement==$('q')){e.preventDefault();roll()}else if(!ty&&e.key=='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey)roll()});
+$('fab').onclick=()=>window.scrollTo({top:scrollY<$('side').offsetHeight/2?$('main').offsetTop:0,behavior:'smooth'});
+$('camp').onchange=e=>{S.cur=e.target.value;C=S.camps[S.cur];ui();save()};
+$('cNew').onclick=()=>{const n=prompt('Campaign name?');if(!n)return;const k='c'+Date.now();S.camps[k]=norm(blank(n));S.cur=k;C=S.camps[k];ui();save()};
+$('cRen').onclick=()=>{const n=prompt('Rename campaign',C.name);if(n){C.name=n;ui();save()}};
+$('cDel').onclick=()=>{if(!confirm(`Delete “${C.name}” and all its scenes? Export a backup first if unsure.`))return;delete S.camps[S.cur];if(!Object.keys(S.camps).length)S.camps.c1=norm(blank('Campaign 1'));S.cur=Object.keys(S.camps)[0];C=S.camps[S.cur];ui();save()};
+$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download='trey_campaigns_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)};
+$('impB').onclick=()=>$('imp').click();
+$('imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(o&&o.camps&&typeof o.camps=='object'&&Object.keys(o.camps).length){if(!confirm('Replace ALL campaigns with the imported file?'))return;S=o}else if(o&&(Array.isArray(o.scenes)||'currentST' in o)){const k='c'+Date.now();S.camps[k]=fromLegacy(o);S.camps[k].name='Imported '+new Date().toLocaleDateString();S.cur=k}else throw 0;for(const k in S.camps)S.camps[k]=norm(S.camps[k]);if(!S.camps[S.cur])S.cur=Object.keys(S.camps)[0];C=S.camps[S.cur];ui();tab(S.tab);save();toast('Imported.')}catch(x){toast('Import failed: that is not a TREY dashboard file.')}};r.readAsText(f);e.target.value=''};
+load();thm();ui();tab(S.tab);
+// PWA: offline support + ask the browser not to evict saved campaigns
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+</script></body></html>
