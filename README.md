@@ -1,10 +1,13 @@
 # TREY Solo Dashboard
 
-A dashboard for playing solo RPGs with the TREY GM emulator: oracle, word tables,
+A personal play aid for solo roleplaying with the TREY GM emulator: oracle, word tables,
 story tokens, plot threads, scene log (Markdown), and generators.
 
-**Use it:** open the GitHub Pages link for this repository. It can be installed as an
-app and works offline after the first visit.
+**This app is a companion to the book, not a replacement for it.** You need
+*TREY Solo Roleplaying* to play. Please support the authors by buying it:
+
+- Official site: [frostbytebooks.com/trey](https://www.frostbytebooks.com/trey)
+- DriveThruRPG: [TREY Solo Roleplaying](https://www.drivethrurpg.com/en/product/469224/trey-solo-roleplaying)
 
 **Your data:** campaigns are saved in your browser on each device, never in this
 repository. Use **Export** regularly for backups, and Export/Import to move
