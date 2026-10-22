@@ -3,9 +3,10 @@
 // (the page itself is always re-checked with the server, skipping the browser's
 // 10-minute cache); when offline it falls back to the last copy it saved.
 // Your campaigns live in the browser's storage, not here, so this never touches them.
-const CACHE = 'trey-v15';
+const CACHE = 'trey-v17';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
-  'icon-maskable-512.png', 'apple-touch-icon.png', 'favicon-32.png'];
+  'icon-maskable-512.png', 'apple-touch-icon.png', 'favicon-32.png',
+  'alegreya-400-italic.woff2', 'alegreya-400-normal.woff2', 'alegreya-500-normal.woff2', 'alegreya-700-italic.woff2', 'alegreya-700-normal.woff2', 'alegreya-sans-400-italic.woff2', 'alegreya-sans-400-normal.woff2', 'alegreya-sans-500-normal.woff2', 'alegreya-sans-700-normal.woff2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
