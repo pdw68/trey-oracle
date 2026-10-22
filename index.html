@@ -64,7 +64,7 @@ input[type=checkbox]{width:auto}
 .fab{display:none}
 @media(max-width:900px){.dash{grid-template-columns:1fr}.side{position:static;max-height:none}.scn{grid-template-columns:1fr}.sl{max-height:30vh}.eh{grid-template-columns:1fr 1fr}.fab{display:block;position:fixed;right:1rem;bottom:1rem;z-index:8;border-radius:50%;width:3.2rem;height:3.2rem;font-size:1.3rem;padding:0}}
 </style></head><body>
-<div class="top"><b style="font-size:1.1rem">TREY Solo Dashboard</b><span class="mu s2" title="App version (updated 2026-10-22)">v14</span>
+<div class="top"><b style="font-size:1.1rem">TREY Solo Dashboard</b><span class="mu s2" id="ver" title="App version (updated 2026-10-22)">v15</span>
 <select id="camp" style="width:auto" aria-label="Campaign"></select>
 <button class="b sm" id="cNew">New</button><button class="b sm" id="cRen">Rename</button><button class="b sm dng" id="cDel">Delete</button>
 <span style="flex:1"></span><span id="sv" class="mu s2"></span>
@@ -146,6 +146,7 @@ const GA=['Female/Short','Female/Tall','Male/Short','Male/Tall','Other/Short','O
 const BEN=[['Skill checks','Repeat a failed skill, attribute or talent check',2],['','Change a failed check to a success',4],['Combat','Get an extra action in the combat round',2],['','Change a miss to a hit',4],['','An enemy hit that would have killed you misses instead',6],['Oracle','Change a Yes to a No, or a No to a Yes',6],['','Exceptional Yes → Yes, or Exceptional No → No',4],['','Change one step on the Detail Die',4,1],['','Event outcome Negative → Positive',6],['','Event outcome Very Negative → Negative',4],['NPC behavior','Change an NPC’s behavior one step',2,1],['','Change an NPC’s capability one step',4,1],['Other','Find something useful for your situation',2],['','Someone who can help you suddenly appears',6]];
 const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),rd=n=>Math.floor(Math.random()*n)+1,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lines=t=>(t||'').split('\n').map(s=>s.trim()).filter(Boolean),pick=a=>a[rd(a.length)-1];
 const modOf=(p,c)=>({very_unlikely:-c,unlikely:-Math.ceil(c/2),likely:Math.ceil(c/2),very_likely:c}[p]||0);
+const VER=15;// bump on every release; the update check compares this number
 const KEY='treyV10';let S,C,tm,tt,lastLog='',NPCL='',uid=Date.now();const nid=()=>++uid;
 const blank=n=>({name:n,st:0,target:15,len:'15',tp:false,goal:'',threads:[],focus:null,allies:'',enemies:'',scenes:[],active:null,log:[]});
 const mkScene=o=>Object.assign({id:nid(),title:'',place:'',time:'',content:'',vol:0,mode:0},o);
@@ -244,6 +245,9 @@ $('impB').onclick=()=>$('imp').click();
 $('imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(o&&o.camps&&typeof o.camps=='object'&&Object.keys(o.camps).length){if(!confirm('Replace ALL campaigns with the imported file?'))return;S=o}else if(o&&(Array.isArray(o.scenes)||'currentST' in o)){const k='c'+Date.now();S.camps[k]=fromLegacy(o);S.camps[k].name='Imported '+new Date().toLocaleDateString();S.cur=k}else throw 0;for(const k in S.camps)S.camps[k]=norm(S.camps[k]);if(!S.camps[S.cur])S.cur=Object.keys(S.camps)[0];C=S.camps[S.cur];ui();tab(S.tab);save();toast('Imported.')}catch(x){toast('Import failed: that is not a TREY dashboard file.')}};r.readAsText(f);e.target.value=''};
 load();thm();ui();tab(S.tab);
 // PWA: offline support + ask the browser not to evict saved campaigns
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+let REG=null;if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').then(r=>REG=r).catch(()=>{});
+// Update check: asks GitHub for the latest index.html (never cached) and offers a reload if it's newer
+async function chkUpd(){if(!location.protocol.startsWith('http'))return;try{if(REG)REG.update().catch(()=>{});const t=await(await fetch('index.html?vcheck='+Date.now(),{cache:'no-store'})).text(),m=t.match(/const VER=(\d+)/);if(m&&+m[1]>VER){const v=$('ver');v.textContent='v'+m[1]+' available ↻';v.className='b sm gold';v.style.cursor='pointer';v.title='Click to load the new version';v.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}location.reload()}}}catch(e){}}
+setTimeout(chkUpd,1500);document.addEventListener('visibilitychange',()=>{if(document.visibilityState=='visible')chkUpd()});addEventListener('pageshow',e=>{if(e.persisted)chkUpd()});
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 </script></body></html>
